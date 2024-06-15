@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phone Number Formatter</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Phone Number Formatter</h2>
+  <form id="phoneNumberForm">
+    <label for="numbers">Enter phone numbers (separated by commas):</label><br>
+    <textarea id="numbers" name="numbers" rows="5" cols="50"></textarea><br>
+    <button type="button" onclick="formatNumbers()">Format Numbers</button>
+  </form>
+  <div id="downloadLink" style="display:none;">
+    <a id="downloadAnchor" href="#" download="formatted_numbers.csv">Download formatted numbers</a>
+  </div>
+
+  <script>
+    function generateCSV(contacts) {
+        const countryCode = "+92"; // Change this if your country code is different
+        const lines = [];
+        const numbers = contacts.split(',').map(num => num.trim());
+
+        // Add CSV headers
+        lines.push("Name,Phone 1 - Type,Phone 1 - Value");
+
+        for (let i = 0; i < numbers.length; i++) {
+            const cleanedNumber = numbers[i].replace(/\D/g, ''); // Remove non-numeric characters
+            if (cleanedNumber.length >= 10) {
+                const phoneNumber = cleanedNumber.slice(-10); // Take the last 10 digits
+                lines.push(`Contact ${i + 1},${countryCode},${phoneNumber}`);
+            } else {
+                console.log(`Invalid number: ${numbers[i]}`);
+            }
+        }
+
+        return lines.join('\n');
+    }
+
+    function downloadCSV(filename, text) {
+        const element = document.getElementById('downloadAnchor');
+        element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        document.getElementById('downloadLink').style.display = 'block';
+    }
+
+    function formatNumbers() {
+        const numbersTextarea = document.getElementById('numbers');
+        const formattedNumbers = generateCSV(numbersTextarea.value);
+        downloadCSV('formatted_numbers.csv', formattedNumbers);
+    }
+  </script>
+</body>
+</html>
